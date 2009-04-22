@@ -161,6 +161,15 @@ module Rack
          rack.multithread rack.multiprocess rack.run_once].each { |header|
         assert("env missing required key #{header}") { env.include? header }
       }
+      
+      env.each do |k, v|
+        if k =~ /^rack\./
+          assert("\"#{k}\" is not a valid key in the rack namespace") do
+            %w(rack.version rack.url_scheme rack.input rack.errors rack.multithread 
+               rack.multiprocess rack.run_once rack.session).any? {|valid_key| k == valid_key }
+          end
+        end
+      end
 
       ## The environment must not contain the keys
       ## <tt>HTTP_CONTENT_TYPE</tt> or <tt>HTTP_CONTENT_LENGTH</tt>
