@@ -40,6 +40,11 @@ context "Rack::Lint" do
     }.should.raise(Rack::Lint::LintError).
       message.should.match(/missing required key SERVER_NAME/)
 
+    lambda {
+      e = env("rack.zomg" => "hello")
+      Rack::Lint.new(nil).call(e)
+    }.should.raise(Rack::Lint::LintError).
+      message.should.match(/"rack.zomg" is not a valid key/)
 
     lambda {
       Rack::Lint.new(nil).call(env("HTTP_CONTENT_TYPE" => "text/plain"))
